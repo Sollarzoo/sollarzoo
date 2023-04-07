@@ -24,6 +24,9 @@ export default {
         });
         this.$map.addLayer(this.$vectorTileLayer);
 
+        const zoom = this.$map.getZoom();
+        const scale = mapRange(zoom, 4, 12, 1, 2);
+
         // init point layer
         this.$layer = new FMap3D.layer.Point({
             style: {
@@ -45,6 +48,16 @@ export default {
         });
         this.$map.addLayer(this.$layer);
 
+        // 定义映射函数
+        function mapRange(value, low1, high1, low2, high2) {
+            return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+        }
+
+        this.$layer.on('zooming', (feature, event, lnglat) => {
+            zoom = this.$map.getZoom();
+            scale = mapRange(zoom, 4, 12, 1, 2);
+        })
+
 
         // 初始化数据
         fetch("https://raw.githubusercontent.com/Sollarzoo/sollarzoo/master/data/Airbnb_prices_Beijing.json")
@@ -54,18 +67,14 @@ export default {
                 const maxPrice = Math.max(...res.data.map(item => item.price));
                 const colorMap = FMap3D.utils.colorInterpolate(["#f7f4f9", "#e7e1ef", "#d4b9da", "#c994c7", "#df65b0", "#e7298a", "#ce1256", "#980043", "#67001f"]);
 
-                // 定义映射函数
-                function mapRange(value, low1, high1, low2, high2) {
-                    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-                }
 
                 this.$featureCollection = FMap3D.transform.pointsCollection(res.data);
                 this.$featureCollection.features.forEach(item => {
-                    const initialRadius = mapRange(item.properties.price, minPrice, maxPrice, 2, 50);
+                    const initialRadius = mapRange(item.properties.price, minPrice, maxPrice, 0.1, 10);
                     const color = colorMap(mapRange(item.properties.price, minPrice, maxPrice, 0, 1));
                     item.properties.style = {};
                     item.properties.style.image = {
-                        radius: initialRadius,
+                        radius: initialRadius * scale,
                         type: "circle",
                     };
                     item.properties.style.fill = {
@@ -76,16 +85,6 @@ export default {
                 });
 
                 this.$layer.setData(this.$featureCollection);
-
-                // 监听地图缩放事件，并动态调整点的大小
-                this.$map.on("zoom", () => {
-                    const zoom = this.$map.getZoom();
-                    const newRadius = mapRange(zoom, 4, 12, 1, 2);
-                    this.$featureCollection.features.forEach(item => {
-                        item.properties.style.image.radius = item.properties.originalRadius * newRadius;
-                    });
-                    this.$layer.setData(this.$featureCollection);
-                });
             });
 
     },
