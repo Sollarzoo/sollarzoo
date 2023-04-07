@@ -33,13 +33,13 @@ export default {
                     anchor: [0.5, 0.5],
                 },
                 stroke: {
-                    color: "#fff",
-                    opacity: 0.5,
-                    width: 1,
+                    color: "#D9DDE7",
+                    opacity: 1,
+                    width: 0.5,
                 },
                 fill: {
-                    color: "#f2ff66",
-                    opacity: 1,
+                    color: "#D9DDE7",
+                    opacity: 0.1,
                 },
             },
         });
@@ -53,7 +53,7 @@ export default {
                 this.$featureCollection.features.forEach(item => {
                     item.properties.style = {}
                     item.properties.style.image = {
-                        radius: item.properties.price / 3000 + 1,
+                        radius: item.properties.price / 1000,
                         type: "circle",
                     }
                 })
