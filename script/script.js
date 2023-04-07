@@ -49,14 +49,30 @@ export default {
         fetch("https://raw.githubusercontent.com/Sollarzoo/sollarzoo/master/data/Airbnb_prices_Beijing.json")
             .then((res) => res.json())
             .then((res) => {
+                // 提取“price”数据，并找到最大值和最小值
+                const prices = res.data.map(item => item.price);
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+
+                // 定义映射函数
+                function mapRange(value, low1, high1, low2, high2) {
+                    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+                }
+
+                // 将“price”属性的值映射到新的区间（例如 10 到 100）
+                res.data.forEach(item => {
+                    item.price = mapRange(item.price, minPrice, maxPrice, 5, 100);
+                });
+
+                // 转换为特征集合并设置数据
                 this.$featureCollection = FMap3D.transform.pointsCollection(res.data);
                 this.$featureCollection.features.forEach(item => {
                     item.properties.style = {}
                     item.properties.style.image = {
-                        radius: item.properties.price / 1000,
+                        radius: item.properties.price,
                         type: "circle",
                     }
-                })
+                });
                 this.$layer.setData(this.$featureCollection);
             });
     },
