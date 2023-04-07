@@ -49,32 +49,38 @@ export default {
         fetch("https://raw.githubusercontent.com/Sollarzoo/sollarzoo/master/data/Airbnb_prices_Beijing.json")
             .then((res) => res.json())
             .then((res) => {
-                // 提取“price”数据，并找到最大值和最小值
-                const prices = res.data.map(item => item.price);
-                const minPrice = Math.min(...prices);
-                const maxPrice = Math.max(...prices);
+                const minPrice = Math.min(...res.data.map(item => item.price));
+                const maxPrice = Math.max(...res.data.map(item => item.price));
 
                 // 定义映射函数
                 function mapRange(value, low1, high1, low2, high2) {
                     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
                 }
 
-                // 将“price”属性的值映射到新的区间（例如 10 到 100）
-                res.data.forEach(item => {
-                    item.price = mapRange(item.price, minPrice, maxPrice, 5, 100);
-                });
-
-                // 转换为特征集合并设置数据
                 this.$featureCollection = FMap3D.transform.pointsCollection(res.data);
                 this.$featureCollection.features.forEach(item => {
-                    item.properties.style = {}
+                    const initialRadius = mapRange(item.properties.price, minPrice, maxPrice, 2, 50);
+                    item.properties.style = {};
                     item.properties.style.image = {
-                        radius: item.properties.price,
+                        radius: initialRadius,
                         type: "circle",
-                    }
+                    };
+                    item.properties.originalRadius = initialRadius;
                 });
+
                 this.$layer.setData(this.$featureCollection);
+
+                // 监听地图缩放事件，并动态调整点的大小
+                this.$map.on("zoom", () => {
+                    const zoom = this.$map.getZoom();
+                    const newRadius = mapRange(zoom, 4, 12, 1, 2);
+                    this.$featureCollection.features.forEach(item => {
+                        item.properties.style.image.radius = item.properties.originalRadius * newRadius;
+                    });
+                    this.$layer.setData(this.$featureCollection);
+                });
             });
+
     },
     beforeDestroy() {
         this.$map.destroy();
