@@ -34,12 +34,12 @@ export default {
                 },
                 stroke: {
                     color: "#D9DDE7",
-                    opacity: 1,
-                    width: 0.5,
+                    opacity: 0,
+                    width: 0,
                 },
                 fill: {
                     color: "#D9DDE7",
-                    opacity: 0.1,
+                    opacity: 0.5,
                 },
             },
         });
