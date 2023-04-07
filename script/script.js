@@ -45,12 +45,14 @@ export default {
         });
         this.$map.addLayer(this.$layer);
 
+
         // 初始化数据
         fetch("https://raw.githubusercontent.com/Sollarzoo/sollarzoo/master/data/Airbnb_prices_Beijing.json")
             .then((res) => res.json())
             .then((res) => {
                 const minPrice = Math.min(...res.data.map(item => item.price));
                 const maxPrice = Math.max(...res.data.map(item => item.price));
+                const colorMap = FMap3D.utils.colorInterpolate(["#f7f4f9", "#e7e1ef", "#d4b9da", "#c994c7", "#df65b0", "#e7298a", "#ce1256", "#980043", "#67001f"]);
 
                 // 定义映射函数
                 function mapRange(value, low1, high1, low2, high2) {
@@ -60,10 +62,15 @@ export default {
                 this.$featureCollection = FMap3D.transform.pointsCollection(res.data);
                 this.$featureCollection.features.forEach(item => {
                     const initialRadius = mapRange(item.properties.price, minPrice, maxPrice, 2, 50);
+                    const color = colorMap(mapRange(item.properties.price, minPrice, maxPrice, 0, 1));
                     item.properties.style = {};
                     item.properties.style.image = {
                         radius: initialRadius,
                         type: "circle",
+                    };
+                    item.properties.style.fill = {
+                        color: color,
+                        opacity: 0.5,
                     };
                     item.properties.originalRadius = initialRadius;
                 });
