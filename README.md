@@ -1,5 +1,6 @@
 ### Hi there 👋
-"I'm a product designer based in Beijing, who also enjoys creating **Data Visualization** related Digital Arts & Productions. 
+
+I'm a product designer based in Beijing, who also enjoys creating **Data Visualization** related **Digital Arts** & **Internet Productions**. 
 
 - 💻 I have some experience with programming
 - 🎨 along with knowledge of interaction design and art/design.
