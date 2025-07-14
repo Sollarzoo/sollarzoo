@@ -8,5 +8,5 @@ I'm a product designer based in Beijing, who also enjoys creating **Data Visuali
 - 📱 If you're interested, feel free to get in touch! You can find me on Xiaohongshu (Little Red Book) by searching for 'sollarzoo'.
   
 ![](https://github.com/Sollarzoo/solare/blob/master/generated/languages.svg)
-![](https://raw.githubusercontent.com/Sollarzoo/github-stats/master/generated/languages.svg#gh-dark-mode-only)
+![](https://github.com/Sollarzoo/solare/blob/master/generated/overview.svg)
 
